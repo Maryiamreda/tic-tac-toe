@@ -3,13 +3,18 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+
 public class GameTest {
     @Test
     public void updateBoardCell_WhenCellOccupied_ReturnFalse() {
       Board board=mock(Board.class);
       when(board.isCellAvailable(2,0)).thenReturn(false);
       assertFalse(board.updateBoard(2,0,"x"));
-//      assertThrows(RuntimeException.class,()->board.updateBoard(2,0,"x"));
     }
     @Test
     public void wrongMove_WhenCellOccupied_GameTurnStayTheSame() {
@@ -23,20 +28,25 @@ public class GameTest {
     }
 
     @Test
-    public void getGameStatus_WhenBotAtLevelThree_BotWins() {
+    public void getGameStatus_WhenBotAtLevelThree_BotWins()  {
         String[][] mockBoard = {
                 {null, "o", "x"},
                 {"x",  "o", null},
                 {"x",  null, null}};
-            Player mockPlayer1=mock(Human.class);
+        PowerMockito.whenNew(Board.class).withNoArguments().thenReturn(mockBoard);
+        Player mockPlayer1=mock(Human.class);
+
             Player mockPlayer2=new Bot(3);
             Game game = new Game( mockPlayer1, mockPlayer2);
-            game.setBoard(mockBoard);
+            Board myboard = game.getBoard();
+
+
             game.setTurns(Turns.PLAYER2);
             game.playTurn(mockPlayer2);
             assertEquals(new Pair(2,1), mockPlayer2.makeMove());
             assertEquals(Status.O_WINS,game.getGameStatus());
     }
+
     @Test
     public void getGameStatus_WhenStart_ReturnsINPROGRESS() {
         Player mockPlayer1=mock(Human.class);
@@ -72,8 +82,6 @@ public class GameTest {
         game.play();
         assertEquals(Status.TIE, game.getGameStatus());
     }
-
-
 }
 
 
