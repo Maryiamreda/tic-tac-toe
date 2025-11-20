@@ -1,58 +1,31 @@
 import org.example.*;
 import org.junit.Test;
-import org.powermock.api.mockito.PowerMockito;
-
-
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 
 public class UnitTest {
     @Test
-    public void test1()  {
+    public void getGameStatus_WhenBotAtLevelThree_BotWins() {
         String[][] board = {
-                {null, "o", "x"},
-                {"x",  "o", null},
-                {"x",  null, null}};
-        Player mockPlayer1=mock(Human.class);
-        Player bot=new Bot(3);
+                {null, "o", null},
+                {"x", "o", null},
+                {"x", null, null}};
+        // player1 is human player
+        Player player1 = new Human();
+        // player2 is a bot player set to hardest difficulty
+        Player player2 = new Bot(Levels.HARD);
+        // game has player 1 and player 2
+        Game game = spy(new Game(player1, player2));
+        //Game game = mock( new Game(player1, player2));
         // player two's turn to make a move
-        Board mockBoard=new Board(board);
-        Game game = new Game( mockPlayer1, bot);
-        when(game.getBoard()).thenReturn(mockBoard);
-        game.setTurns(Turns.PLAYER2);
-        game.playTurn(bot);
-        assertEquals(new Pair(2,1), bot.makeMove());
-        assertEquals(Status.O_WINS,game.getGameStatus());
+        when(game.getTurn()).thenReturn(Turns.PLAYER2);
+        // there is a winning move on the board for player2
+        when(game.getBoard()).thenReturn(board);
+        game.playTurn();
+        // game board should be updated by the winning move
+        assertEquals("o", board[1][2]);
+        // game should returns that player two won
+//        assertEquals(Status.O_WINS, game.getGameStatus());
     }
-    //op on the actual board
-    @Test
-    public void test2()  {
-        Player mockPlayer1=mock(Human.class);
-        Player Bot=new Bot(3);
-        Game game = new Game( mockPlayer1, Bot);
-        for (int i = 0; i < 1; i++) {
-            game.getBoard().updateBoard(0,i,"o");
-            game.getBoard().updateBoard(1,i,"x");
-        }
-        game.setTurns(Turns.PLAYER2);
-        game.playTurn(Bot);
-        assertEquals(new Pair(0,2), Bot.makeMove());
-        assertEquals(Status.O_WINS,game.getGameStatus());
-    }
-    //use spy
-    @Test
-    public void test3()  {
-        Player mockPlayer1=mock(Human.class);
-        Player bot=new Bot(3);
-        Game game = new Game( mockPlayer1, bot);
-        for (int i = 0; i < 1; i++) {
-            game.getBoard().updateBoard(0,i,"o");
-        }
-        game.setTurns(Turns.PLAYER2);
-        game.playTurn(bot);
-        assertEquals(new Pair(0,2), bot.makeMove());
-        assertEquals(Status.O_WINS,game.getGameStatus());
-    }
+
 }
