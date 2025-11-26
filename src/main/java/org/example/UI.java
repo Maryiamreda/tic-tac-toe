@@ -61,19 +61,16 @@ public class UI extends Application {
                 final int c = j;
                 Button btn = (Button) getChildAtRowCol(r, c);
                 btn.setOnAction(evt -> {
-                    if (game!= null && game.getTurn() == Turns.PLAYER1 && checkGameStatus() == Status.IN_PROGRESS) {
-                        ((Human) player1).setMove(r, c);
-                        game.playTurn();
-                        btn.setText(player1.getSymbol().toString());
-                        if (checkGameStatus() == Status.IN_PROGRESS) {
-                            game.playTurn();
-                            updateBoard();
-                            checkGameStatus();
-                        }
-                    }
+                    onCellClick( r ,  c);
                 });
             }
         }
+    }
+    private void onCellClick(int r , int c){
+        ((Human) player1).setMove(r, c);
+        game.runGameLoop();
+        updateBoard();
+        checkGameStatus();
     }
     private Parent levelsChoice() {
         Label label = new Label("Bot Level:");
@@ -85,6 +82,8 @@ public class UI extends Application {
         initChoice();
         saveButton.setOnAction((evt) -> {
             newGame();
+            saveButton.setDisable(true);
+
         });
         return hbox;
     }
@@ -107,14 +106,13 @@ public class UI extends Application {
         levelsClass.getItems().addAll(levelClasses);
         levelsClass.setValue(null);
     }
-    private Status checkGameStatus() {
+    private void checkGameStatus() {
         Status status = game.getGameStatus();
         switch (status) {
             case X_WINS -> gameStatus.setText(X_WINNING_TEXT);
             case O_WINS -> gameStatus.setText(O_WINNING_TEXT);
             case TIE -> gameStatus.setText(TIE_TEXT);
         }
-        return status;
     }
     private void newGame() {
         if (game== null) {
