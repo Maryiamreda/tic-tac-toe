@@ -1,22 +1,30 @@
 package org.example;
 
 public class Board {
-    private String[][] board ;
+    private Symbols[][] board ;
     public Board() {
-        this.board=new String[3][3];
+        this.board=new Symbols[3][3];
     }
-
-    public String[][] getBoard() {
+    public Symbols[][] getBoard() {
         return board;
     }
-
-    public Board(String[][] b) {
+    public Board( Symbols[][]  b) {
         this.board=b;
     }
     public boolean isCellAvailable(int x, int y) {
         return this.board[x][y]==null;
     }
-    protected boolean updateBoard(int x, int y, String s){
+    public boolean isFull(){
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j]==null){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    protected boolean updateBoard(int x, int y, Symbols s){
         if(isCellAvailable(x,y)){
             this.board[x][y]=s;
             return true;

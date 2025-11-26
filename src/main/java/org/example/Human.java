@@ -1,10 +1,26 @@
 package org.example;
 
+import java.util.Scanner;
+
 public class Human extends Player  {
+    private Pair nextMove = null;
+
     public Human() {}
+
     @Override
-    public Pair makeMove(String[][] board) {
-        System.out.println("human is making a move");
-        return new Pair(0,9);
+    public void setSymbol(Symbols s) {
+        this.mySymbol=s;
+    }
+
+    @Override
+    protected Symbols getSymbol() {
+        return this.mySymbol;
+    }
+    public void setMove(int x, int y) {
+        this.nextMove = new Pair(x, y);
+    }
+    @Override
+    public Pair makeMove(Symbols[][] board) {
+        return nextMove;
     }
 }

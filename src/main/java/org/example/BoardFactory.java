@@ -1,5 +1,5 @@
 package org.example;
-
+//Factory interface defining the factory method
 public interface BoardFactory {
-  public   Board createBoard();
+    Board createBoard();
 }
