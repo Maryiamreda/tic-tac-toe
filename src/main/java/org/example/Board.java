@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.enumeration.Symbols;
+
 public class Board {
     private Symbols[][] board ;
     public Board() {
@@ -31,5 +33,11 @@ public class Board {
         }
         return false;
     }
+    public void reset() {
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                board[i][j] = null;
+    }
+
 }
 

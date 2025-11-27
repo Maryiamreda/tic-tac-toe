@@ -1,4 +1,4 @@
-package org.example;
+package org.example.enumeration;
 
 public enum Status{
     IN_PROGRESS,

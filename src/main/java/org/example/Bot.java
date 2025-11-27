@@ -1,29 +1,29 @@
 package org.example;
-
+import org.example.enumeration.Levels;
+import org.example.enumeration.Symbols;
 import java.util.Random;
-
-import static org.example.Symbols.O;
-import static org.example.Symbols.X;
-
+import static org.example.enumeration.Symbols.O;
+import static org.example.enumeration.Symbols.X;
 public class Bot extends Player {
     final Levels level;
-
+    private BoardView boardView;
+    public void updateView(BoardView boardView) {
+        this.boardView = boardView;
+    }
     public Bot(Levels level) {
         this.level = level;
     }
-
     @Override
     public void setSymbol(Symbols s) {
         this.mySymbol = s;
     }
-
     @Override
     protected Symbols getSymbol() {
         return this.mySymbol;
     }
-
     @Override
-    public Pair makeMove(Symbols[][] board) {
+    public Pair makeMove() {
+        Symbols[][] board = boardView.getCopy();
         if (level == Levels.HARD) return calculateBestMove(board, this.getSymbol());
         if (level == Levels.EASY) return chooseRandom(board);
         if (level == Levels.MEDIUM) {
@@ -33,7 +33,6 @@ public class Bot extends Player {
         }
         return null;
     }
-
     public Pair chooseRandom(Symbols[][] board) {
         boolean valid = false;
         int randomRow = -1;
@@ -69,12 +68,7 @@ public class Bot extends Player {
 //
         return new Pair(0, 0);
     }
-
     public Pair isWinning(Symbols[][] board, Symbols s) {
-        //write the worst code you ever think off
-        //we loop through every column and row , without the diagonals ----
-        //if we start of with x we break , if we have null we store this as our position --- for now !!!
-        //at the end we check our previous count if its more we take it
         //rows
         for (int i = 0; i < 3; i++) {
             int counter = 0;
@@ -82,7 +76,8 @@ public class Bot extends Player {
             for (int j = 0; j < 3; j++) {
                 if (board[i][j] == null) {
                     myMove = new Pair(i, j);
-                } else if (board[i][j] == s) {
+                }
+                else if (board[i][j] == s) {
                     counter++;
                 }
             }
@@ -97,7 +92,8 @@ public class Bot extends Player {
             for (int i = 0; i < 3; i++) {
                 if (board[i][j] == null) {
                     myMove = new Pair(i, j);
-                } else if (board[i][j] == s) {
+                }
+                else if (board[i][j] == s) {
                     counter++;
                 }
             }
@@ -111,7 +107,8 @@ public class Bot extends Player {
         for (int i = 0; i < 3; i++) {
             if (board[i][i] == null) {
                 myMove = new Pair(i, i);
-            } else if (board[i][i] == s) {
+            }
+            else if (board[i][i] == s) {
                 counter++;
             }
             if (counter == 2 && myMove != null) {

@@ -13,6 +13,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.enumeration.Levels;
+import org.example.enumeration.Status;
+import org.example.enumeration.Symbols;
+
 import java.util.ArrayList;
 import java.util.List;
 import static org.example.GameConstants.*;
@@ -67,8 +71,9 @@ public class UI extends Application {
         }
     }
     private void onCellClick(int r , int c){
+        //this is not right the game only run on the a cell click which shouldn't not happen
         ((Human) player1).setMove(r, c);
-        game.runGameLoop();
+        game.runNextIteration();
         updateBoard();
         checkGameStatus();
     }
@@ -115,6 +120,7 @@ public class UI extends Application {
         }
     }
     private void newGame() {
+        // study state machine
         if (game== null) {
             player2 = new Bot(levelsClass.getValue());
             game= new Game(player1, player2);

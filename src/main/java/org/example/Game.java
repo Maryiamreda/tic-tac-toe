@@ -1,51 +1,63 @@
 package org.example;
 
+import org.example.enumeration.Status;
+import org.example.enumeration.Symbols;
+import org.example.enumeration.Turns;
+
 public class Game {
     private Turns turn = Turns.PLAYER1;
     private Player player1;
     private Player player2;
     private Board board;
-
     public Game(Player player1, Player player2) {
         this.player1 = player1;
         this.player1.setSymbol(Symbols.X);
         this.player2 = player2;
         this.player2.setSymbol(Symbols.O);
-        this.board = ConcreteBoardFactory.createBoard();
-    }
+        this.board = BoardFactory.createBoard();
 
+//        if (player1 instanceof Bot bot1)
+//            bot1.updateView(getBoardView());
+    }
     public Turns getTurn() {
         return this.turn;
     }
 
-    public void setTurn() {
-        this.turn = this.getTurn() == Turns.PLAYER1 ? Turns.PLAYER2 : Turns.PLAYER1;
+    private void switchTurn() {
+        this.turn = (this.turn == Turns.PLAYER1) ? Turns.PLAYER2 : Turns.PLAYER1;
     }
 
     public Symbols[][] getBoard() {
         // return presentation not actual reference
         return this.board.getBoard();
     }
-
-    //resource-pattern/strategy-pattern/simple state
-    public void playTurn(){
-        System.out.println("board state");
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (getBoard()[i][j] == null) System.out.print(".");
-                else System.out.print(getBoard()[i][j] + " ");
-            }
-            System.out.println();
-        }
-        Player currentPlayer = this.getTurn() == Turns.PLAYER1 ? player1 : player2;
-        Symbols playerSymbol = currentPlayer.getSymbol();
-        Pair p = currentPlayer.makeMove(this.getBoard());
-        boolean boardState = this.board.updateBoard(p.x, p.y, playerSymbol);
-        if (!boardState) System.out.println("please make valid move");
-        else this.setTurn();
-
+    private Player currentPlayer() {
+        return (turn == Turns.PLAYER1) ? player1 : player2;
     }
-
+    public BoardView getBoardView() {
+        //we make a deep copy of the board
+        return new BoardView(board.getBoard());
+    }
+    public void playTurn() {
+//        for (int i = 0; i < 3; i++) {
+//            for (int j = 0; j < 3; j++) {
+//                System.out.print(this.board.getBoard()[i][j]+" ");
+//            }
+//            System.out.println();
+//        }
+        if (getGameStatus() != Status.IN_PROGRESS) return;
+        Player currentPlayer = currentPlayer();
+        if (currentPlayer instanceof Bot bot) {
+            //bot get the new copy of the board
+            bot.updateView(getBoardView());
+        }
+        Pair move = currentPlayer.makeMove();
+        boolean success = board.updateBoard(move.x, move.y, currentPlayer.getSymbol());
+        if (!success) {
+            return;
+        }
+        switchTurn();
+    }
     public Status getGameStatus() {
         Symbols[][] myBoard = this.getBoard();
         Symbols s = null;
@@ -71,7 +83,6 @@ public class Game {
         if (this.board.isFull()) return Status.TIE;
         return Status.IN_PROGRESS;
     }
-
     public void play() {
         while (getGameStatus() == Status.IN_PROGRESS) {
             playTurn();
@@ -84,8 +95,7 @@ public class Game {
             System.out.println("it's a Tie!!");
         }
     }
-
-    public void runGameLoop() {
+    public void runNextIteration() {
         if (getTurn() != Turns.PLAYER1 || getGameStatus() != Status.IN_PROGRESS) {
             return;
         }
@@ -94,14 +104,8 @@ public class Game {
             playTurn();
         }
     }
-
     public void reset() {
-        Symbols[][] board = this.getBoard();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                board[i][j] = null;
-            }
-        }
+        board.reset();
         turn = Turns.PLAYER1;
     }
 }

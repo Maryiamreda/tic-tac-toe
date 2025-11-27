@@ -1,4 +1,8 @@
 import org.example.*;
+import org.example.enumeration.Levels;
+import org.example.enumeration.Status;
+import org.example.enumeration.Symbols;
+import org.example.enumeration.Turns;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.BDDMockito;
@@ -7,12 +11,12 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 
-import static org.example.Symbols.O;
-import static org.example.Symbols.X;
+import static org.example.enumeration.Symbols.O;
+import static org.example.enumeration.Symbols.X;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(ConcreteBoardFactory.class)
+@PrepareForTest(BoardFactory.class)
 public class UnitTest {
     @Test
     public void getGameStatus_WhenBotAtLevelThree_BotWins() {
@@ -22,8 +26,8 @@ public class UnitTest {
                 {X, null, null}
         };
          Board b = new Board(mockBoard);
-        PowerMockito.mockStatic(ConcreteBoardFactory.class);
-        BDDMockito.given(ConcreteBoardFactory.createBoard()).willReturn(b);
+        PowerMockito.mockStatic(BoardFactory.class);
+        BDDMockito.given(BoardFactory.createBoard()).willReturn(b);
         // player1 is human player
         Player player1 = new Bot(Levels.HARD);
         // player2 is a bot player set to hardest difficulty
@@ -44,8 +48,8 @@ public class UnitTest {
                 {X, O, O},
                 {null, O, X}};
         Board b = new Board(mockBoard);
-        PowerMockito.mockStatic(ConcreteBoardFactory.class);
-        BDDMockito.given(ConcreteBoardFactory.createBoard()).willReturn(b);
+        PowerMockito.mockStatic(BoardFactory.class);
+        BDDMockito.given(BoardFactory.createBoard()).willReturn(b);
         // player1 is bot player  set to hardest difficulty
         Player player1 = new Bot(Levels.HARD);
         // player2 is a human player
@@ -64,14 +68,14 @@ public class UnitTest {
                 {X, O, O},
                 {null, O, X}};
         Board b = new Board(mockBoard);
-        PowerMockito.mockStatic(ConcreteBoardFactory.class);
-        BDDMockito.given(ConcreteBoardFactory.createBoard()).willReturn(b);
+        PowerMockito.mockStatic(BoardFactory.class);
+        BDDMockito.given(BoardFactory.createBoard()).willReturn(b);
         //mock human player to make illegal move
         Player player1 = mock(Human.class);
         // player1 is bot player  set to hardest difficulty
         Player player2 = new Bot(Levels.HARD);
         //   mock human player's illegal move
-        when(player1.makeMove(mockBoard)).thenReturn(new Pair(2, 2));
+        when(player1.makeMove()).thenReturn(new Pair(2, 2));
         // game has player 1 and player 2
         Game game = new Game(player1, player2);
         //start first turn
@@ -82,8 +86,8 @@ public class UnitTest {
     @Test
     public void getGameStatus_WhenStart_ReturnsINPROGRESS() {
         Board b = new Board();
-        PowerMockito.mockStatic(ConcreteBoardFactory.class);
-        BDDMockito.given(ConcreteBoardFactory.createBoard()).willReturn(b);
+        PowerMockito.mockStatic(BoardFactory.class);
+        BDDMockito.given(BoardFactory.createBoard()).willReturn(b);
         Player player1 = new Human();
         Player player2 = new Human();
         Game game = new Game(player1, player2);
